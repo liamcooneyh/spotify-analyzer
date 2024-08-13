@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlist Created</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div id="app">
+        <h1>Playlist Created Successfully!</h1>
+        <p>Your new playlist "<strong>{{ playlist_name }}</strong>" has been saved to your Spotify account.</p>
+        <p>
+            <a href="{{ playlist_url }}" target="_blank">Click here to view your playlist on Spotify</a>
+        </p>
+        <br>
+        <form action="/playlist-creator" method="get">
+            <input type="submit" value="Create Another Playlist">
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Playlist</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div id="app">
+        <h1>Create Playlist</h1>
+        <form method="POST" action="/save-playlist">
+            <h2>Playlist Name</h2>
+            <input type="text" name="playlist_name" required>
+            <h2>Review Tracks</h2>
+            <ul>
+                {% for track in tracks %}
+                    <li>{{ track.track_name }} by {{ track.artists }}</li>
+                {% endfor %}
+            </ul>
+            <input type="submit" value="Confirm and Create Playlist">
+        </form>
+    </div>
+</body>
+</html>

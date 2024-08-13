@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Tracks</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div id="app">
+        <h1>Filter Tracks</h1>
+        <form method="POST" action="/apply-filters">
+            <label for="min_danceability">Min Danceability:</label>
+            <input type="number" step="0.01" name="min_danceability" id="min_danceability" value="{{ request.form.get('min_danceability', '') }}">
+            <br>
+            <label for="max_danceability">Max Danceability:</label>
+            <input type="number" step="0.01" name="max_danceability" id="max_danceability" value="{{ request.form.get('max_danceability', '') }}">
+            <br>
+            <label for="min_energy">Min Energy:</label>
+            <input type="number" step="0.01" name="min_energy" id="min_energy" value="{{ request.form.get('min_energy', '') }}">
+            <br>
+            <label for="max_energy">Max Energy:</label>
+            <input type="number" step="0.01" name="max_energy" id="max_energy" value="{{ request.form.get('max_energy', '') }}">
+            <br>
+            <label for="min_tempo">Min Tempo (BPM):</label>
+            <input type="number" step="0.1" name="min_tempo" id="min_tempo" value="{{ request.form.get('min_tempo', '') }}">
+            <br>
+            <label for="max_tempo">Max Tempo (BPM):</label>
+            <input type="number" step="0.1" name="max_tempo" id="max_tempo" value="{{ request.form.get('max_tempo', '') }}">
+            <br>
+            <label for="key">Key (0-11):</label>
+            <input type="number" min="0" max="11" name="key" id="key" value="{{ request.form.get('key', '') }}">
+            <br>
+            <input type="submit" value="Apply Filters and Proceed">
+        </form>
+
+        <h2>Selected Tracks</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Artists</th>
+                    <th>Danceability</th>
+                    <th>Energy</th>
+                    <th>Key</th>
+                    <th>Mode</th>
+                    <th>Tempo (BPM)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for track in tracks %}
+                    <tr>
+                        <td>{{ track.track_name }}</td>
+                        <td>{{ track.artists }}</td>
+                        <td>{{ track.danceability }}</td>
+                        <td>{{ track.energy }}</td>
+                        <td>{{ track.key }}</td>
+                        <td>{{ track.mode }}</td>
+                        <td>{{ track.tempo }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
