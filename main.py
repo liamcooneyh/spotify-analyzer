@@ -3,7 +3,7 @@ import requests
 import urllib.parse
 
 from datetime import datetime, timedelta
-from flask import Flask, redirect, request, jsonify, session
+from flask import Flask, render_template, redirect, request, jsonify, session
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -63,10 +63,10 @@ def callback():
         session['refresh_token'] = token_info['refresh_token']
         session['expires_at'] = datetime.now().timestamp() + token_info['expires_in']  #timestamp of expiration
         
-        return redirect('/playlists')
+        return redirect('/playlist-creator')
         
 
-@app.route('/playlists')
+@app.route('/playlist-creator')
 def get_playlists():
     if 'access_token' not in session:
         # Login to retrieve access token
@@ -85,22 +85,51 @@ def get_playlists():
     track_ids = []
     
     response = requests.get(API_BASE_URL + 'me/playlists', headers=headers)
-    playlists = response.json()
+    playlists = response.json()['items']
     
-    for playlist in playlists['items']: 
-        playlist_id = playlist['id'] 
-        playlist_ids.append(playlist_id)
+    # for playlist in playlists['items']: 
+    #     playlist_id = playlist['id'] 
+    #     playlist_ids.append(playlist_id)
         
-    for playlist_id in playlist_ids:    
+    # for playlist_id in playlist_ids:    
+    #     tracks_response = requests.get(API_BASE_URL + 'playlists/' + playlist_id + '/tracks', headers=headers)
+    #     tracks = tracks_response.json()
+    
+    #     for track in tracks['items']:
+    #         track_id = track['track']['id']
+    #         track_ids.append(track_id)
+    
+    return render_template('index.html', playlists=playlists) # returns all tracks (with duplicates) in all playlists
+    
+@app.route('/submit-playlists', methods=['POST'])
+def submit_playlists():
+    if 'access_token' not in session:
+        # Login to retrieve access token
+        return redirect('/login')
+    
+    if datetime.now().timestamp() > session['expires_at']:
+        # Token is expired, refresh in background
+        print("TOKEN EXPIRED. REFRESHING...")
+        return redirect('/refresh-token')
+    
+    headers = {
+        'Authorization': f"Bearer {session['access_token']}"
+    }
+    
+    source_tracks = []
+    
+    selected_playlists = request.form.getlist('playlist')
+    
+    for playlist_id in selected_playlists:    
         tracks_response = requests.get(API_BASE_URL + 'playlists/' + playlist_id + '/tracks', headers=headers)
         tracks = tracks_response.json()
-    
+        
         for track in tracks['items']:
             track_id = track['track']['id']
-            track_ids.append(track_id)
-    
-    return(track_ids) # returns all tracks (with duplicates) in all playlists
-    
+            source_tracks.append(track_id)
+            
+    return(source_tracks)
+
 
 @app.route('/refresh-token')
 def refresh_token():
@@ -121,7 +150,7 @@ def refresh_token():
         session['access_token'] = new_token_info['access_token']
         session['expires_at'] = datetime.now().timestamp() + new_token_info['expires_in']
         
-        return redirect('/playlists')
+        return redirect('/playlist-creator')
 
 
 if __name__ == '__main__':

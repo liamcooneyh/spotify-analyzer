@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Playlists</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div id="app">
+        <h1>Select Your Playlists</h1>
+        <form method="POST" action="/submit-playlists">
+            {% for playlist in playlists %}
+                <input type="checkbox" name="playlist" value="{{ playlist.id }}">{{ playlist.name }}<br>
+            {% endfor %}
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</body>
+</html>
