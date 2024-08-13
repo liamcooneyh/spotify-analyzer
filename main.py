@@ -87,18 +87,6 @@ def get_playlists():
     response = requests.get(API_BASE_URL + 'me/playlists', headers=headers)
     playlists = response.json()['items']
     
-    # for playlist in playlists['items']: 
-    #     playlist_id = playlist['id'] 
-    #     playlist_ids.append(playlist_id)
-        
-    # for playlist_id in playlist_ids:    
-    #     tracks_response = requests.get(API_BASE_URL + 'playlists/' + playlist_id + '/tracks', headers=headers)
-    #     tracks = tracks_response.json()
-    
-    #     for track in tracks['items']:
-    #         track_id = track['track']['id']
-    #         track_ids.append(track_id)
-    
     return render_template('index.html', playlists=playlists) # returns all tracks (with duplicates) in all playlists
     
 @app.route('/submit-playlists', methods=['POST'])
@@ -127,8 +115,9 @@ def submit_playlists():
         for track in tracks['items']:
             track_id = track['track']['id']
             source_tracks.append(track_id)
-            
-    return(source_tracks)
+    
+    # Returns all track ids from selected playlists (with duplicates)        
+    return(source_tracks) 
 
 
 @app.route('/refresh-token')
