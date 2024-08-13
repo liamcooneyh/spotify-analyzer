@@ -27,7 +27,7 @@ def index():
 
 @app.route('/login')
 def login():
-    scope = 'user-read-private user-read-email'
+    scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private'
     
     params = {
         'client_id': CLIENT_ID,
@@ -81,19 +81,26 @@ def get_playlists():
         'Authorization': f"Bearer {session['access_token']}"
     }
     
+    playlist_ids = []
+    track_ids = []
+    
     response = requests.get(API_BASE_URL + 'me/playlists', headers=headers)
-    # playlists = response.json()
+    playlists = response.json()
     
-    # Debugging: Check the status code and content
-    # print(f"Status Code: {response.status_code}")
-    # print(f"Response Content: {response.text}")
+    for playlist in playlists['items']: 
+        playlist_id = playlist['id'] 
+        playlist_ids.append(playlist_id)
+        
+    for playlist_id in playlist_ids:    
+        tracks_response = requests.get(API_BASE_URL + 'playlists/' + playlist_id + '/tracks', headers=headers)
+        tracks = tracks_response.json()
     
-    if response.status_code == 200:
-        playlists = response.json()  # Parse JSON only if the request was successful
-        return jsonify(playlists)
-    else:
-        return jsonify({"error": "Failed to retrieve playlists", "status_code": response.status_code, "content": response.text})
-
+        for track in tracks['items']:
+            track_id = track['track']['id']
+            track_ids.append(track_id)
+    
+    return(track_ids) # returns all tracks (with duplicates) in all playlists
+    
 
 @app.route('/refresh-token')
 def refresh_token():
